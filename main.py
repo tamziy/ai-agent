@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-
+from config import SYSTEM_PROMPT
 
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
@@ -16,13 +16,13 @@ def main():
     parser.add_argument("user_prompt", type=str, help="Enter a prompt for the agent")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
-    print(args)
 
     messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
 
     response = client.models.generate_content(
         model='gemini-2.5-flash',
-        contents=messages
+        contents=messages,
+        config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT)
     )
     response_metadata = response.usage_metadata
 
